@@ -5,37 +5,24 @@ namespace App\Http\Controllers;
 use App\Models\Site;
 use App\Models\Incident;
 use App\Jobs\VerifySiteDownJob;
-use Illuminate\Http\Request;
+use App\Http\Requests\UptimeKumaWebhookRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 
 class WebhookController extends Controller
 {
-    public function uptimeKuma(Request $request): JsonResponse
+    public function uptimeKuma(UptimeKumaWebhookRequest $request): JsonResponse
     {
 
+        echo '<pre>';
+        var_dump($request->validated());
+        echo '</pre>';
+        die();
         Log::info('Uptime Kuma webhook received', $request->all());
+        $data = $request->validated();
 
-        $validator = Validator::make($request->all(), [
-            'heartbeat' => 'required|array',
-            'heartbeat.status' => 'required|integer',
-            'heartbeat.msg' => 'nullable|string',
-            'heartbeat.time' => 'required|string',
-            'monitor' => 'required|array',
-            'monitor.name' => 'required|string',
-            'monitor.url' => 'required|string',
-        ]);
-
-
-
-        if ($validator->fails()) {
-            Log::error('Invalid Uptime Kuma webhook payload', $validator->errors()->toArray());
-            return response()->json(['error' => 'Invalid payload'], 400);
-        }
-
-        $heartbeat = $request->input('heartbeat');
-        $monitor = $request->input('monitor');
+        $heartbeat = $data['heartbeat'];
+        $monitor = $data['monitor'];
         $status = $heartbeat['status'];
         $url = $monitor['url'];
         $name = $monitor['name'];
