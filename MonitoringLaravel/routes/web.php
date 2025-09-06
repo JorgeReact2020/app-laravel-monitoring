@@ -25,15 +25,7 @@ Route::get('/', function () {
 // Public webhook endpoint (no auth required)
 
 
-// Reboot routes with signed URLs (no auth required but signature validated)
-Route::prefix('reboot')->name('reboot.')->group(function () {
-    Route::get('/site/{site}/incident/{incident}', [RebootController::class, 'show'])
-        ->name('show');
-    Route::post('/site/{site}/incident/{incident}', [RebootController::class, 'reboot'])
-        ->name('execute');
-    Route::get('/site/{site}/incident/{incident}/status/{rebootLog}', [RebootController::class, 'status'])
-        ->name('status');
-});
+
 
 // Authenticated routes
 Route::middleware(['auth', 'verified'])->group(function () {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RebootController;
 use App\Http\Controllers\WebhookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,3 +23,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/webhook/uptime-kuma', [WebhookController::class, 'uptimeKuma'])
     ->name('webhook.uptime-kuma');
+
+
+// Reboot routes with signed URLs (no auth required but signature validated)
+Route::prefix('reboot')->name('reboot.')->group(function () {
+    Route::get('/site/{site}/incident/{incident}', [RebootController::class, 'show'])
+        ->name('show');
+    Route::post('/site/{site}/incident/{incident}', [RebootController::class, 'reboot'])
+        ->name('execute');
+    Route::get('/site/{site}/incident/{incident}/status/{rebootLog}', [RebootController::class, 'status'])
+        ->name('status');
+});
